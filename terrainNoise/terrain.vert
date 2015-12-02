@@ -9,13 +9,13 @@ layout(location = 2) in vec3 normal;
 
 out vec3 Normal;
 out vec3 Position;
-out vec4 ShadowCoord;
+varying vec4 ShadowCoord;
 
 // Uniform variables are passed in from the application
 uniform mat4 model, view, projection;
 uniform uint colourmode;
 uniform mat3 normalmatrix;
-uniform mat4 ShadowMatrix;
+uniform mat4 shadow;
 
 // Output the vertex colour - to be rasterized into pixel fragments
 out vec4 fcolour;
@@ -63,7 +63,7 @@ void main()
 
 	Position = (mv_matrix * vec4(position,1.0)).xyz;
 	Normal = normalize( normalmatrix * normal );
-	ShadowCoord = ShadowMatrix * vec4(position,1.0);
+	ShadowCoord = shadow * vec4(position,1.0);
 	gl_Position = MVP * vec4(position,1.0);
 
 	mat3 normalmatrix = mat3(mv_matrix);
