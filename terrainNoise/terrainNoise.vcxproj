@@ -78,11 +78,13 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="noiseutils.h" />
     <ClInclude Include="object_ldr.h" />
     <ClInclude Include="terrain_object.h" />
     <ClInclude Include="wrapper_glfw.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="noiseutils.cpp" />
     <ClCompile Include="object_ldr.cpp" />
     <ClCompile Include="terrain.cpp" />
     <ClCompile Include="terrain_object.cpp" />

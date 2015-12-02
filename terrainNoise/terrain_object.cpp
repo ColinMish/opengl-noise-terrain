@@ -3,8 +3,10 @@ Example class to show how to render a height map
 Iain Martin November 2014
 */
 
+#include <noise/noise.h>
 #include "terrain_object.h"
 #include <glm/gtc/noise.hpp>
+#include "noiseutils.h"
 
 /* Define the vertex attributes for vertex positions and normals. 
    Make these match your application and vertex shader
@@ -100,9 +102,42 @@ void terrain_object::drawObject(int drawmode)
 	}
 }
 
+//Uses Perlin noise to generate a heightmap using coherent noise
+void terrain_object::generateHeightMap()
+{
+	//Create our Perlin noise module
+	noise::module::Perlin myModule;
+	//Create a planar noise map builder
+	utils::NoiseMap heightMap;
+
+
+	utils::NoiseMapBuilderPlane heightMapBuilder;
+	heightMapBuilder.SetSourceModule(myModule);
+	heightMapBuilder.SetDestNoiseMap(heightMap);
+	heightMapBuilder.SetDestSize(256, 256);
+
+	//Set boundaries for the heightmap on the z and x axis
+	heightMapBuilder.SetBounds(5.0, 9.0, 4.0, 8.0);
+	heightMapBuilder.Build();
+
+	utils::RendererImage renderer;
+	utils::Image image;
+	renderer.SetSourceNoiseMap(heightMap);
+	renderer.SetDestImage(image);
+	renderer.Render();
+
+	utils::WriterBMP writer;
+	writer.SetSourceImage(image);
+	writer.SetDestFilename("heightmap.bmp");
+	writer.WriteDestFile();
+}
 
 /* Define the terrian heights */
 /* Uses code adapted from OpenGL Shading Language Cookbook: Chapter 8 */
+/*
+This function is as it is in the lab start, it is being commented out and a similar function is used instead to generate
+a heightmap from coherent noise
+*/
 void terrain_object::calculateNoise()
 {
 	/* Create the array to store the noise values */
@@ -114,6 +149,8 @@ void terrain_object::calculateNoise()
 	GLfloat zfactor = 1.f / (zsize - 1);
 	GLfloat freq = perlin_freq;
 	GLfloat scale = perlin_scale;
+
+	generateHeightMap();
 
 	for (int row = 0; row < zsize; row++)
 	{
@@ -144,6 +181,7 @@ void terrain_object::calculateNoise()
 		}
 	}
 }
+
 
 /* Define the vertex array that specifies the terrain
    (x, y) specifies the pixel dimensions of the heightfield (x * y) vertices

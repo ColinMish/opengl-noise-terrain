@@ -10,6 +10,7 @@ if you prefer */
 #pragma comment(lib, "glfw3.lib")
 #pragma comment(lib, "glloadD.lib")
 #pragma comment(lib, "opengl32.lib")
+#pragma comment(lib, "libnoise.lib")
 
 /* Include the header to the GLFW wrapper class which
    also includes the OpenGL extension initialisation*/

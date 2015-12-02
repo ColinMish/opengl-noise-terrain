@@ -19,6 +19,7 @@ public:
 	void calculateNoise();
 	void createTerrain(GLuint xp, GLuint yp, GLfloat xs, GLfloat ys);
 	void calculateNormals();
+	void generateHeightMap();
 	void stretchToRange(GLfloat min, GLfloat max);
 	void defineSea(GLfloat sealevel);
 
