@@ -5,10 +5,13 @@
 */
 
 #pragma once
+#pragma comment(lib, "libnoise.lib")
 
 #include "wrapper_glfw.h"
 #include <vector>
 #include <glm/glm.hpp>
+#include <noise/noise.h>
+#include "noiseutils.h"
 
 class terrain_object
 {
@@ -19,7 +22,7 @@ public:
 	void calculateNoise();
 	void createTerrain(GLuint xp, GLuint yp, GLfloat xs, GLfloat ys);
 	void calculateNormals();
-	void generateHeightMap();
+	noise::utils::NoiseMap generateHeightMap();
 	void stretchToRange(GLfloat min, GLfloat max);
 	void defineSea(GLfloat sealevel);
 

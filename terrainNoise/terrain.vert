@@ -7,9 +7,15 @@ layout(location = 0) in vec3 position;
 layout(location = 1) in vec4 colour;
 layout(location = 2) in vec3 normal;
 
+out vec3 Normal;
+out vec3 Position;
+out vec4 ShadowCoord;
+
 // Uniform variables are passed in from the application
 uniform mat4 model, view, projection;
 uniform uint colourmode;
+uniform mat3 normalmatrix;
+uniform mat4 ShadowMatrix;
 
 // Output the vertex colour - to be rasterized into pixel fragments
 out vec4 fcolour;
@@ -29,15 +35,15 @@ void main()
 	}
 	else
 	{
-		if (position.y <= 0)
+		if (position.y <= 3.0)
 		{
 			diffuse_colour = vec4(0.2, 0.2, 1.0, 1.0);
 		}
-		else if (position.y < 1.0)
+		else if (position.y < 6.0)
 		{
 			diffuse_colour = vec4(0.0, 0.6, 0.2, 1.0);
 		}
-		else if (position.y < 2.0)
+		else if (position.y < 9.0)
 		{
 			diffuse_colour = vec4(0.6, 0.4, 0.2, 1.0);
 		}
@@ -53,6 +59,13 @@ void main()
 	ambient = diffuse_colour * 0.2;
 
 	mat4 mv_matrix = view * model;
+	mat4 MVP = projection * view * model;
+
+	Position = (mv_matrix * vec4(position,1.0)).xyz;
+	Normal = normalize( normalmatrix * normal );
+	ShadowCoord = ShadowMatrix * vec4(position,1.0);
+	gl_Position = MVP * vec4(position,1.0);
+
 	mat3 normalmatrix = mat3(mv_matrix);
 	vec3 N = mat3(mv_matrix) * normal;
 	N = normalize(N);

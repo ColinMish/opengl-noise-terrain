@@ -103,7 +103,7 @@ void terrain_object::drawObject(int drawmode)
 }
 
 //Uses Perlin noise to generate a heightmap using coherent noise
-void terrain_object::generateHeightMap()
+noise::utils::NoiseMap terrain_object::generateHeightMap()
 {
 	//Create our Perlin noise module
 	noise::module::Perlin myModule;
@@ -130,6 +130,8 @@ void terrain_object::generateHeightMap()
 	writer.SetSourceImage(image);
 	writer.SetDestFilename("heightmap.bmp");
 	writer.WriteDestFile();
+
+	return heightMap;
 }
 
 /* Define the terrian heights */
@@ -150,9 +152,17 @@ void terrain_object::calculateNoise()
 	GLfloat freq = perlin_freq;
 	GLfloat scale = perlin_scale;
 
-	generateHeightMap();
+	//double MaxValueFor;
+	//double currentValue;
+	//added now
+	module::Perlin myModule;
+	myModule.SetOctaveCount(6);
+	myModule.SetFrequency(1.0);
+	myModule.SetPersistence(0.5);
+	double value;
+	utils::NoiseMap heightMap = generateHeightMap();
 
-	for (int row = 0; row < zsize; row++)
+	for (int row = 0; row <zsize; row++)
 	{
 		for (int col = 0; col < xsize; col++)
 		{
@@ -162,24 +172,28 @@ void terrain_object::calculateNoise()
 			GLfloat curent_scale = scale;
 			GLfloat current_freq = freq;
 
-			// Compute the sum for each octave
-			for (int oct = 0; oct < perlin_octaves; oct++)
-			{
-				glm::vec2 p(x*current_freq, z*current_freq);
-				GLfloat val = glm::perlin(p) / curent_scale;
-				sum += val;
-				GLfloat result = (sum + 1.f) / 2.f;
+			//this
+			//for (int oct = 0; oct < 4; oct++)
+			//{
+			value = heightMap.GetValue(row, col);
 
-				// Store the noise value in our noise array
-				noise[(row * xsize + col) * perlin_octaves + oct] = result;
-				
-				// Move to the next frequency and scale
-				current_freq *= 2.f;
-				curent_scale *= scale;
-			}
-			
+			//value = myModule.GetValue(row / scaleForTerrain, col / scaleForTerrain, 0);
+
+			noise[(row * xsize + col) * perlin_octaves] = value*scale;
+
+
+
+			//	if (currentValue < value*scaleForTerrain){
+			//		MaxValueFor = currentValue;
+			//		std::cout << MaxValueFor;
+			//	}
+
+
 		}
+
 	}
+
+
 }
 
 

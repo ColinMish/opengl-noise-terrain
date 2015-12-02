@@ -29,6 +29,9 @@ GLuint positionBufferObject, colourObject, normalsBufferObject;
 GLuint sphereBufferObject, sphereNormals, sphereColours, sphereTexCoords;
 GLuint elementbuffer;
 
+// Shadow frame buffer object for rendering depth maps
+GLuint shadowFBO, depthTex;
+
 GLuint program;		/* Identifier for the shader prgoram */
 GLuint vao;			/* Vertex array (Containor) object. This is the index of the VAO that will be the container for
 					   our buffer objects */
@@ -46,6 +49,7 @@ GLuint numlats, numlongs;	//Define the resolution of the sphere object
 /* Uniforms*/
 GLuint modelID, viewID, projectionID;
 GLuint colourmodeID;
+GLuint shadowID;
 
 GLfloat aspect_ratio;		/* Aspect ratio of the window defined in the reshape callback*/
 GLuint numspherevertices;
@@ -61,8 +65,6 @@ GLfloat land_size;
 void makeUnitSphere(GLfloat *pVertices, GLfloat *pTexCoords, GLuint numlats, GLuint numlongs);
 GLuint makeSphereVBO(GLuint numlats, GLuint numlongs);
 void drawSphere();
-
-
 
 /*
 This function is called before entering the main rendering loop.
@@ -220,6 +222,27 @@ GLfloat texcoords[] =
 	1.f, 1.f, 0, 1.f, 0, 0
 };
 
+	/* start of example code to create frame buffer objects: http://luugiathuy.com/2011/09/create-frame-buffer-object-opengl/ */
+
+	GLuint depthTexture;
+	glGenTextures(1, &depthTexture);
+	// bind the texture
+	glBindTexture(GL_TEXTURE_2D, depthTexture);
+	// set texture parameters
+	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+	// create the texture in the GPU
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT, 640, 480, 0, GL_DEPTH_COMPONENT, GL_UNSIGNED_INT, NULL);
+	// unbind the texture
+	glBindTexture(GL_TEXTURE_2D, 0);
+
+	// attach to frame buffer
+	glBindFramebuffer(GL_FRAMEBUFFER, shadowFBO);
+	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, depthTexture, 0);
+
+	/* end of example code */
 
 	/* Create the vertex buffer for the cube */
 	glGenBuffers(1, &positionBufferObject);
@@ -248,7 +271,7 @@ GLfloat texcoords[] =
 	perlin_frequency = 1.f;
 	land_size = 50.f;
 	heightfield = new terrain_object(octaves, perlin_frequency, perlin_scale);
-	heightfield->createTerrain(1000, 1000, land_size, land_size);
+	heightfield->createTerrain(256, 256, land_size, land_size);
 	heightfield->createObject();
 	
 	/* Load and build the vertex and fragment shaders */
@@ -268,7 +291,33 @@ GLfloat texcoords[] =
 	colourmodeID = glGetUniformLocation(program, "colourmode");
 	viewID = glGetUniformLocation(program, "view");
 	projectionID = glGetUniformLocation(program, "projection");
+	shadowID = glGetUniformLocation(program, "shadow");
 }
+
+void shadow_matrix(glm::vec4 lt, glm::vec4 pl, glm::mat4 shadow_proj)
+{
+	// dot product of normal and light position/direction
+	GLfloat rdotl;
+	rdotl = pl.x*lt.x + pl.y*lt.y + pl.z*lt.z + pl.w*lt.w;
+
+	shadow_proj[0][0] = -pl.x*lt.x + rdotl;
+	shadow_proj[0][1] = -pl.x*lt.y;
+	shadow_proj[0][2] = -pl.x*lt.z;
+	shadow_proj[0][3] = -pl.x*lt.w;
+	shadow_proj[1][0] = -pl.y*lt.x;
+	shadow_proj[1][1] = -pl.y*lt.y + rdotl;
+	shadow_proj[1][2] = -pl.y*lt.z;
+	shadow_proj[1][3] = -pl.y*lt.w;
+	shadow_proj[2][0] = -pl.z*lt.x;
+	shadow_proj[2][1] = -pl.z*lt.y;
+	shadow_proj[2][2] = -pl.z*lt.z + rdotl;
+	shadow_proj[2][3] = -pl.z*lt.w;
+	shadow_proj[3][0] = -pl.w*lt.x;
+	shadow_proj[3][1] = -pl.w*lt.y;
+	shadow_proj[3][2] = -pl.w*lt.z;
+	shadow_proj[3][3] = -pl.w*lt.w + rdotl;
+}
+
 
 /* Called to update the display. Note that this function is called in the event loop in the wrapper
    class because we registered display as a callback function */
@@ -444,7 +493,7 @@ static void keyCallback(GLFWwindow* window, int key, int s, int action, int mods
 	{
 		delete heightfield;
 		heightfield = new terrain_object(octaves, perlin_frequency, perlin_scale);
-		heightfield->createTerrain(200, 200, land_size, land_size);
+		heightfield->createTerrain(256, 256, land_size, land_size);
 		heightfield->createObject();
 	}
 }
