@@ -80,6 +80,7 @@
   <ItemGroup>
     <ClInclude Include="noiseutils.h" />
     <ClInclude Include="object_ldr.h" />
+    <ClInclude Include="SOIL.h" />
     <ClInclude Include="terrain_object.h" />
     <ClInclude Include="wrapper_glfw.h" />
   </ItemGroup>

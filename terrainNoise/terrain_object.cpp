@@ -7,9 +7,11 @@ Iain Martin November 2014
 #include "terrain_object.h"
 #include <glm/gtc/noise.hpp>
 #include "noiseutils.h"
+#include "SOIL.h"
 
 // Size of the procedurally generated texture
 const int TEXTURE_SIZE = 256;
+GLuint texture[1];
 
 // Creates the color gradients for the texture.
 void CreateTextureColor(utils::RendererImage& renderer);
@@ -103,6 +105,18 @@ void terrain_object::generateTexture()
 		"textureseamless.bmp");
 	CreateSphericalTexture(finalGranite, TEXTURE_SIZE	,
 		"texturesphere.bmp");
+}
+
+GLint loadGLTexture( char *filename)
+{
+	GLuint SOIL_response;
+	SOIL_response = SOIL_load_OGL_texture(filename, 0, 0, SOIL_FLAG_POWER_OF_TWO);
+	if (!SOIL_response)
+	{
+		printf("Texture could not be loaded");
+		exit(1);
+	}
+	return (SOIL_response);
 }
 
 void CreateTextureColor(utils::RendererImage& renderer)
