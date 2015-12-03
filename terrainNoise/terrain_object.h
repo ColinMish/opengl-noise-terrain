@@ -20,6 +20,7 @@ public:
 	~terrain_object();
 
 	void calculateNoise();
+	void generateTexture();
 	void createTerrain(GLuint xp, GLuint yp, GLfloat xs, GLfloat ys);
 	void calculateNormals();
 	noise::utils::NoiseMap generateHeightMap();

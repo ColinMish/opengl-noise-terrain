@@ -71,6 +71,7 @@ void drawSphere();
 This function is called before entering the main rendering loop.
 Use it for all your initialisation stuff
 */
+
 void init(GLWrapper *glw)
 {
 	/* Set the object transformation controls to their initial values */
