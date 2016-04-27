@@ -35,15 +35,15 @@ void main()
 	}
 	else
 	{
-		if (position.y <= 3.0)
+		if (position.y <= 0)
 		{
 			diffuse_colour = vec4(0.2, 0.2, 1.0, 1.0);
 		}
-		else if (position.y < 6.0)
+		else if (position.y < 3)
 		{
 			diffuse_colour = vec4(0.0, 0.6, 0.2, 1.0);
 		}
-		else if (position.y < 9.0)
+		else if (position.y < 6)
 		{
 			diffuse_colour = vec4(0.6, 0.4, 0.2, 1.0);
 		}

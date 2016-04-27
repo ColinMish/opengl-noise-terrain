@@ -8,6 +8,9 @@ Iain Martin November 2014
 #include <glm/gtc/noise.hpp>
 #include "noiseutils.h"
 #include "SOIL.h"
+#include "mountainTerrain.h"
+#include "baseFlatTerrain.h"
+#include "flatTerrain.h"
 
 // Size of the procedurally generated texture
 const int TEXTURE_SIZE = 256;
@@ -266,38 +269,6 @@ void terrain_object::drawObject(int drawmode)
 	}
 }
 
-//Uses Perlin noise to generate a heightmap using coherent noise
-noise::utils::NoiseMap terrain_object::generateHeightMap()
-{
-	//Create our Perlin noise module
-	noise::module::Perlin myModule;
-	//Create a planar noise map builder
-	utils::NoiseMap heightMap;
-
-
-	utils::NoiseMapBuilderPlane heightMapBuilder;
-	heightMapBuilder.SetSourceModule(myModule);
-	heightMapBuilder.SetDestNoiseMap(heightMap);
-	heightMapBuilder.SetDestSize(256, 256);
-
-	//Set boundaries for the heightmap on the z and x axis
-	heightMapBuilder.SetBounds(5.0, 9.0, 4.0, 8.0);
-	heightMapBuilder.Build();
-
-	utils::RendererImage renderer;
-	utils::Image image;
-	renderer.SetSourceNoiseMap(heightMap);
-	renderer.SetDestImage(image);
-	renderer.Render();
-
-	utils::WriterBMP writer;
-	writer.SetSourceImage(image);
-	writer.SetDestFilename("heightmap.bmp");
-	writer.WriteDestFile();
-
-	return heightMap;
-}
-
 /* Define the terrian heights */
 /* Uses code adapted from OpenGL Shading Language Cookbook: Chapter 8 */
 /*
@@ -306,6 +277,12 @@ a heightmap from coherent noise
 */
 void terrain_object::calculateNoise()
 {
+
+	//TODO: clean up unused terrains
+	mountainTerrain mountainTerr;
+	baseFlatTerrain baseFlatTerr;
+	flatTerrain flatTerr;
+
 	/* Create the array to store the noise values */
 	/* The size is the number of vertices * number of octaves */
 	noise = new GLfloat[xsize * zsize * perlin_octaves];
@@ -324,7 +301,7 @@ void terrain_object::calculateNoise()
 	myModule.SetFrequency(1.0);
 	myModule.SetPersistence(0.5);
 	double value;
-	utils::NoiseMap heightMap = generateHeightMap();
+	utils::NoiseMap heightMap = flatTerr.generateFlatHeightMap();
 
 	for (int row = 0; row <zsize; row++)
 	{
@@ -419,7 +396,7 @@ void terrain_object::createTerrain(GLuint xp, GLuint zp, GLfloat xs, GLfloat zs)
 	stretchToRange(-(xs / 8.f), (xs / 8.f));
 
 	// Define a sea level by flattening low regions
-	defineSea(3);
+	defineSea(0);
 
 	// Calculate the normals by averaging cross products for all triangles 
 	calculateNormals();

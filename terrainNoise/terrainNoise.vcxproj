@@ -54,10 +54,12 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <MultiProcessorCompilation>false</MultiProcessorCompilation>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalDependencies>SOIL.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -78,17 +80,25 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="baseFlatTerrain.h" />
+    <ClInclude Include="flatTerrain.h" />
+    <ClInclude Include="mountainTerrain.h" />
     <ClInclude Include="noiseutils.h" />
     <ClInclude Include="object_ldr.h" />
     <ClInclude Include="SOIL.h" />
     <ClInclude Include="terrain_object.h" />
+    <ClInclude Include="typeTerrain.h" />
     <ClInclude Include="wrapper_glfw.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="baseFlatTerrain.cpp" />
+    <ClCompile Include="flatTerrain.cpp" />
+    <ClCompile Include="mountainTerrain.cpp" />
     <ClCompile Include="noiseutils.cpp" />
     <ClCompile Include="object_ldr.cpp" />
     <ClCompile Include="terrain.cpp" />
     <ClCompile Include="terrain_object.cpp" />
+    <ClCompile Include="typeTerrain.cpp" />
     <ClCompile Include="wrapper_glfw.cpp" />
   </ItemGroup>
   <ItemGroup>
