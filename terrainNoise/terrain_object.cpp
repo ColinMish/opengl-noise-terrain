@@ -11,6 +11,7 @@ Iain Martin November 2014
 #include "mountainTerrain.h"
 #include "baseFlatTerrain.h"
 #include "flatTerrain.h"
+#include "typeTerrain.h"
 
 // Size of the procedurally generated texture
 const int TEXTURE_SIZE = 256;
@@ -282,6 +283,7 @@ void terrain_object::calculateNoise()
 	mountainTerrain mountainTerr;
 	baseFlatTerrain baseFlatTerr;
 	flatTerrain flatTerr;
+	typeTerrain typeTerr;
 
 	/* Create the array to store the noise values */
 	/* The size is the number of vertices * number of octaves */

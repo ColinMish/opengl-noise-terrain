@@ -55,6 +55,7 @@ void main()
 		// Define the colour based on the height of the vertex
 		//diffuse_colour = vec4(0.5, 0.3, 0.2, 1.0);
 	}
+	
 
 	ambient = diffuse_colour * 0.2;
 

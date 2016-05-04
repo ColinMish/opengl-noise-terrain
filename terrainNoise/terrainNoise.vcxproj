@@ -81,6 +81,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="baseFlatTerrain.h" />
+    <ClInclude Include="finalTerrain.h" />
     <ClInclude Include="flatTerrain.h" />
     <ClInclude Include="mountainTerrain.h" />
     <ClInclude Include="noiseutils.h" />
@@ -92,6 +93,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="baseFlatTerrain.cpp" />
+    <ClCompile Include="finalTerrain.cpp" />
     <ClCompile Include="flatTerrain.cpp" />
     <ClCompile Include="mountainTerrain.cpp" />
     <ClCompile Include="noiseutils.cpp" />
