@@ -279,11 +279,24 @@ a heightmap from coherent noise
 void terrain_object::calculateNoise()
 {
 
-	//TODO: clean up unused terrains
-	mountainTerrain mountainTerr;
-	baseFlatTerrain baseFlatTerr;
-	flatTerrain flatTerr;
-	typeTerrain typeTerr;
+	module::RidgedMulti mountainTerr;
+	module::Billow baseFlatTerr;
+	baseFlatTerr.SetFrequency(0.5);
+	module::ScaleBias flatTerr;
+	flatTerr.SetSourceModule(0, baseFlatTerr);
+	flatTerr.SetScale(0.125);
+	flatTerr.SetBias(-1);
+
+	module::Perlin typeTerr;
+	typeTerr.SetFrequency(0.5);
+	typeTerr.SetPersistence(0.25);
+
+	module::Select finalTerr;
+	finalTerr.SetSourceModule(0, flatTerr);
+	finalTerr.SetSourceModule(1, mountainTerr);
+	finalTerr.SetControlModule(typeTerr);
+	finalTerr.SetBounds(0.0, 1000.0);
+	finalTerr.SetEdgeFalloff(0.55);
 
 	/* Create the array to store the noise values */
 	/* The size is the number of vertices * number of octaves */
@@ -303,7 +316,15 @@ void terrain_object::calculateNoise()
 	myModule.SetFrequency(1.0);
 	myModule.SetPersistence(0.5);
 	double value;
-	utils::NoiseMap heightMap = flatTerr.generateFlatHeightMap();
+	
+	//utils::NoiseMap heightMap = flatTerr.generateFlatHeightMap();
+	utils::NoiseMap heightMap;
+	utils::NoiseMapBuilderPlane heightMapBuilder;
+	heightMapBuilder.SetSourceModule(finalTerr);
+	heightMapBuilder.SetDestNoiseMap(heightMap);
+	heightMapBuilder.SetDestSize(256, 256);
+	heightMapBuilder.SetBounds(5.0, 9.0, 4.0, 8.0);
+	heightMapBuilder.Build();
 
 	for (int row = 0; row <zsize; row++)
 	{
