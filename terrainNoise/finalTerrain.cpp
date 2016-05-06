@@ -49,7 +49,7 @@ noise::utils::NoiseMap finalTerrain::generateFinalHeightMap()
 
 	utils::WriterBMP writer;
 	writer.SetSourceImage(image);
-	writer.SetDestFilename("baseflatheightmap.bmp");
+	writer.SetDestFilename("finalheightmap.bmp");
 	writer.WriteDestFile();
 
 	return heightMap;

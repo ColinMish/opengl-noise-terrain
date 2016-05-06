@@ -42,7 +42,7 @@ noise::utils::NoiseMap typeTerrain::generateTypeTerrainMap()
 
 	utils::WriterBMP writer;
 	writer.SetSourceImage(image);
-	writer.SetDestFilename("terrainTypeMap.bmp");
+	writer.SetDestFilename("terraintypeheightmap.bmp");
 	writer.WriteDestFile();
 
 	return heightMap;

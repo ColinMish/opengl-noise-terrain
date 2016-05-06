@@ -103,12 +103,12 @@ void terrain_object::generateTexture()
 
 	// Given the granite noise module, create a non-seamless texture map, a
 	// seamless texture map, and a spherical texture map.
-	CreatePlanarTexture(finalGranite, false, TEXTURE_SIZE,
-		"textureplane.bmp");
-	CreatePlanarTexture(finalGranite, true, TEXTURE_SIZE,
-		"textureseamless.bmp");
-	CreateSphericalTexture(finalGranite, TEXTURE_SIZE	,
-		"texturesphere.bmp");
+	//CreatePlanarTexture(finalGranite, false, TEXTURE_SIZE,
+	//	"textureplane.bmp");
+	//CreatePlanarTexture(finalGranite, true, TEXTURE_SIZE,
+	//	"textureseamless.bmp");
+	//CreateSphericalTexture(finalGranite, TEXTURE_SIZE	,
+	//	"texturesphere.bmp");
 }
 
 GLint loadGLTexture( char *filename)
@@ -279,9 +279,19 @@ a heightmap from coherent noise
 void terrain_object::calculateNoise()
 {
 
+	baseFlatTerrain baseT;
+	flatTerrain flatT;
+	mountainTerrain mountainT;
+	typeTerrain typeT;
+
+	baseT.generateBaseFlatHeightMap();
+	flatT.generateFlatHeightMap();
+	mountainT.generateMountainHeightMap();
+	typeT.generateTypeTerrainMap();
+
 	module::RidgedMulti mountainTerr;
 	module::Billow baseFlatTerr;
-	baseFlatTerr.SetFrequency(0.5);
+	baseFlatTerr.SetFrequency(2);
 	module::ScaleBias flatTerr;
 	flatTerr.SetSourceModule(0, baseFlatTerr);
 	flatTerr.SetScale(0.125);
@@ -296,7 +306,7 @@ void terrain_object::calculateNoise()
 	finalTerr.SetSourceModule(1, mountainTerr);
 	finalTerr.SetControlModule(typeTerr);
 	finalTerr.SetBounds(0.0, 1000.0);
-	finalTerr.SetEdgeFalloff(0.55);
+	finalTerr.SetEdgeFalloff(1);
 
 	/* Create the array to store the noise values */
 	/* The size is the number of vertices * number of octaves */
